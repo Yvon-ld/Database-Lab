@@ -1,0 +1,80 @@
+{
+  "title": "大学生生活习惯调查",
+  "description": "用于演示单选、多选、文本、数字题与跳转逻辑",
+  "settings": {
+    "allowAnonymous": true,
+    "allowMultipleSubmissions": true,
+    "deadlineAt": ""
+  },
+  "questions": [
+    {
+      "questionId": "question-gender",
+      "title": "你的性别是？",
+      "description": "",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "label": "男" },
+        { "label": "女" },
+        { "label": "其他" }
+      ],
+      "jumpRules": []
+    },
+    {
+      "questionId": "question-fruit",
+      "title": "你喜欢的水果有哪些？",
+      "description": "",
+      "type": "multi_choice",
+      "required": true,
+      "options": [
+        { "label": "苹果" },
+        { "label": "香蕉" },
+        { "label": "西瓜" },
+        { "label": "葡萄" }
+      ],
+      "validation": {
+        "multi": {
+          "minSelected": 2,
+          "maxSelected": 3
+        }
+      },
+      "jumpRules": []
+    },
+    {
+      "questionId": "question-idea",
+      "title": "你对食堂的建议是什么？",
+      "description": "",
+      "type": "text",
+      "required": false,
+      "validation": {
+        "text": {
+          "minLength": 2,
+          "maxLength": 80
+        }
+      },
+      "jumpRules": []
+    },
+    {
+      "questionId": "question-age",
+      "title": "你的年龄是多少？",
+      "description": "",
+      "type": "number",
+      "required": true,
+      "validation": {
+        "number": {
+          "min": 0,
+          "max": 120,
+          "integerOnly": true
+        }
+      },
+      "jumpRules": [
+        {
+          "priority": 1,
+          "ruleType": "number_lt",
+          "value": 18,
+          "targetQuestionId": "__SUBMIT__"
+        }
+      ]
+    }
+  ]
+}

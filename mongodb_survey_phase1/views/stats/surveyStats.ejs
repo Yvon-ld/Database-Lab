@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1><%= survey.title %> - 统计结果</h1>
+    <p>总提交数：<strong><%= stats.totalSubmissions %></strong></p>
+  </div>
+  <a class="btn btn-secondary" href="/dashboard">返回</a>
+</section>
+
+<section class="stats-grid">
+  <% stats.questionStats.forEach((item) => { %>
+    <article class="card">
+      <div class="page-head">
+        <div>
+          <h2><%= item.title %></h2>
+          <p>题型：<%= item.type %> ｜ 回答人数：<%= item.totalResponses %></p>
+        </div>
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats/<%= item.questionId %>">单题详情</a>
+      </div>
+
+      <% if (item.optionCounts) { %>
+        <ul class="stats-list">
+          <% item.optionCounts.forEach((option) => { %>
+            <li><span><%= option.label %></span><strong><%= option.count %></strong></li>
+          <% }) %>
+        </ul>
+      <% } else if (item.type === 'number') { %>
+        <p>平均值：<%= item.average === null ? '暂无' : item.average.toFixed(2) %></p>
+        <pre><%= JSON.stringify(item.allValues, null, 2) %></pre>
+      <% } else { %>
+        <pre><%= JSON.stringify(item.allValues, null, 2) %></pre>
+      <% } %>
+    </article>
+  <% }) %>
+</section>
+<%- include('../partials/footer') %>

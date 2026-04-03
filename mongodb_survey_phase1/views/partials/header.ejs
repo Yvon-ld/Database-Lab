@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MongoDB 问卷系统</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/dashboard">MongoDB 问卷系统</a>
+      <nav>
+        <% if (currentUser) { %>
+          <div class="user-panel">
+            <span class="user-name">你好，<%= currentUser.username %></span>
+            <span class="user-time">
+              注册时间：
+              <%= new Date(currentUser.createdAt).toLocaleString('zh-CN', {
+                hour12: false
+              }) %>
+            </span>
+          </div>
+          <a class="nav-link" href="/dashboard">我的问卷</a>
+          <a class="nav-link" href="/surveys/new">新建问卷</a>
+          <form action="/auth/logout" method="POST" class="inline-form">
+            <button class="btn btn-light" type="submit">退出登录</button>
+          </form>
+        <% } else { %>
+          <a class="nav-link" href="/auth/login">登录</a>
+          <a class="nav-link" href="/auth/register">注册</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <% if (error) { %>
+      <div class="alert error"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="alert success"><%= success %></div>
+    <% } %>

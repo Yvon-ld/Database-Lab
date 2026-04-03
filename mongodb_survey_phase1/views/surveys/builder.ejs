@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1><%= pageTitle %></h1>
+    <p>配置问卷基础信息，并按需添加题目。</p>
+  </div>
+</section>
+
+<form action="<%= submitUrl %>" method="POST" id="builderForm">
+  <input type="hidden" name="builderPayload" id="builderPayload" />
+  <div class="builder-layout">
+    <section class="card">
+      <h2>问卷基础信息</h2>
+      <label>问卷标题
+        <input id="surveyTitle" type="text" required value="<%= survey?.title || '' %>" />
+      </label>
+      <label>问卷说明
+        <textarea id="surveyDescription" rows="4"><%= survey?.description || '' %></textarea>
+      </label>
+
+      <div class="settings-grid">
+        <div class="setting-card">
+          <div class="setting-copy">
+            <label class="setting-title" for="allowAnonymous">允许匿名填写</label>
+            <p class="setting-desc">开启后，未登录用户也可以通过问卷链接直接填写。</p>
+          </div>
+          <input
+            id="allowAnonymous"
+            type="checkbox"
+            <%= survey?.settings?.allowAnonymous ? 'checked' : '' %>
+          />
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-copy">
+            <label class="setting-title" for="allowMultipleSubmissions">允许重复提交</label>
+            <p class="setting-desc">开启后，同一个填写者可以多次提交同一份问卷。</p>
+          </div>
+          <input
+            id="allowMultipleSubmissions"
+            type="checkbox"
+            <%= survey?.settings?.allowMultipleSubmissions !== false ? 'checked' : '' %>
+          />
+        </div>
+      </div>
+
+      <label>截止时间
+        <input id="deadlineAt" type="datetime-local" value="<%= survey?.settings?.deadlineAt ? new Date(survey.settings.deadlineAt).toISOString().slice(0, 16) : '' %>" />
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="page-head">
+        <div>
+          <h2>题目列表</h2>
+          <p>你可以在下方继续添加、编辑和调整题目。</p>
+        </div>
+      </div>
+
+      <div id="questionsContainer"></div>
+
+      <div class="builder-question-actions">
+        <button class="btn" type="button" id="addQuestionBtn">+ 添加题目</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="button-row">
+    <button class="btn" type="submit">保存问卷</button>
+    <a class="btn btn-secondary" href="/dashboard">返回</a>
+  </div>
+</form>
+
+<script>
+  window.__INITIAL_SURVEY__ = <%- JSON.stringify(survey || null) %>;
+</script>
+<script src="/js/builder.js"></script>
+<%- include('../partials/footer') %>

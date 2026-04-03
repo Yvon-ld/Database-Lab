@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1>我的问卷</h1>
+    <p>你只能看到并管理自己创建的问卷。</p>
+  </div>
+  <a class="btn" href="/surveys/new">+ 创建问卷</a>
+</section>
+
+<% if (!surveys.length) { %>
+  <section class="card">
+    <p>你还没有创建问卷，点击右上角开始。</p>
+  </section>
+<% } %>
+
+<section class="survey-grid">
+  <% surveys.forEach((survey) => { %>
+    <article class="card survey-card">
+      <div class="survey-card-head">
+        <h2><%= survey.title %></h2>
+        <span class="status <%= survey.status %>"><%= survey.status %></span>
+      </div>
+      <p><%= survey.description || '暂无说明' %></p>
+      <ul class="meta-list">
+        <li>链接：<a href="/survey/<%= survey.slug %>" target="_blank"><code>/survey/<%= survey.slug %></code></a></li>
+        <li>是否允许匿名：<%= survey.settings.allowAnonymous ? '是' : '否' %></li>
+        <li>提交次数：<%= survey.responseCount %></li>
+        <li>版本号：v<%= survey.version %></li>
+      </ul>
+      <div class="button-row wrap">
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/edit">编辑</a>
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">查看统计</a>
+        <% if (survey.status !== 'published') { %>
+          <form action="/surveys/<%= survey._id %>/publish" method="POST" class="inline-form">
+            <button class="btn" type="submit">发布</button>
+          </form>
+        <% } %>
+        <% if (survey.status !== 'closed') { %>
+          <form action="/surveys/<%= survey._id %>/close" method="POST" class="inline-form">
+            <button class="btn btn-danger" type="submit">关闭</button>
+          </form>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</section>
+<%- include('../partials/footer') %>
