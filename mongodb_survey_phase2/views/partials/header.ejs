@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MongoDB Survey System</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/dashboard">MongoDB Survey System</a>
+      <nav>
+        <% if (currentUser) { %>
+          <div class="user-panel">
+            <span class="user-name"><%= currentUser.username %></span>
+            <span class="user-time">
+              joined
+              <%= new Date(currentUser.createdAt).toLocaleString('zh-CN', {
+                hour12: false
+              }) %>
+            </span>
+          </div>
+          <a class="nav-link" href="/dashboard">Dashboard</a>
+          <a class="nav-link" href="/questions">Question Bank</a>
+          <a class="nav-link" href="/surveys/new">New Survey</a>
+          <form action="/auth/logout" method="POST" class="inline-form">
+            <button class="btn btn-light" type="submit">Logout</button>
+          </form>
+        <% } else { %>
+          <a class="nav-link" href="/auth/login">Login</a>
+          <a class="nav-link" href="/auth/register">Register</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <% if (error) { %>
+      <div class="alert error"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="alert success"><%= success %></div>
+    <% } %>

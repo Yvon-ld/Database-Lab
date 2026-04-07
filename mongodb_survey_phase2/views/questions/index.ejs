@@ -1,0 +1,80 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1>Question Bank</h1>
+    <p>Create reusable question versions, organize them in libraries, and share them across survey authors.</p>
+  </div>
+  <div class="button-row">
+    <a class="btn" href="/questions/new">New Question</a>
+  </div>
+</section>
+
+<div class="builder-shell">
+  <div class="builder-main">
+    <section class="card">
+      <h2>Latest Accessible Question Versions</h2>
+      <% if (!catalog.questions.length) { %>
+        <p class="muted">No reusable questions yet.</p>
+      <% } %>
+
+      <div class="survey-grid">
+        <% catalog.questions.forEach((question) => { %>
+          <article class="card survey-card compact-card">
+            <div class="survey-card-head">
+              <h3><%= question.title %></h3>
+              <span class="status <%= question.visibility === 'shared' ? 'published' : 'draft' %>">
+                v<%= question.version %>
+              </span>
+            </div>
+            <p><%= question.description || 'No description' %></p>
+            <ul class="meta-list">
+              <li><span>Type</span><strong><%= question.type %></strong></li>
+              <li><span>Owner</span><strong><%= question.isOwner ? 'Me' : 'Shared' %></strong></li>
+              <li><span>Root</span><strong><code><%= question.rootQuestionId || question._id %></code></strong></li>
+            </ul>
+            <div class="button-row wrap">
+              <a class="btn btn-secondary" href="/questions/<%= question._id %>">Details</a>
+              <a class="btn btn-secondary" href="/surveys/new">Use in Survey</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  </div>
+
+  <aside class="builder-sidebar">
+    <section class="card sticky-card">
+      <h2>Create Library</h2>
+      <form action="/questions/libraries" method="POST" class="form-grid">
+        <label>Library name
+          <input type="text" name="name" required />
+        </label>
+        <label>Description
+          <textarea name="description" rows="3"></textarea>
+        </label>
+        <button class="btn" type="submit">Create Library</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>My Libraries</h2>
+      <% if (!catalog.libraries.length) { %>
+        <p class="muted">No libraries yet.</p>
+      <% } %>
+      <div class="catalog-group">
+        <% catalog.libraries.forEach((library) => { %>
+          <div class="catalog-library">
+            <strong><%= library.name %></strong>
+            <p class="muted"><%= library.description || 'No description' %></p>
+            <div class="catalog-chip-list">
+              <% library.questions.forEach((question) => { %>
+                <a class="chip-link" href="/questions/<%= question._id %>"><%= question.title %> (v<%= question.version %>)</a>
+              <% }) %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  </aside>
+</div>
+<%- include('../partials/footer') %>

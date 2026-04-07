@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1><%= pageTitle %></h1>
+    <p>Create a reusable question definition. Survey-specific jump rules are configured later inside a survey.</p>
+  </div>
+  <a class="btn btn-secondary" href="/questions">Back to Question Bank</a>
+</section>
+
+<% if (sourceQuestion) { %>
+  <section class="card">
+    <p>
+      You are creating a new version from root <code><%= sourceQuestion.rootQuestionId %></code>, current base version <strong>v<%= sourceQuestion.version %></strong>.
+    </p>
+  </section>
+<% } %>
+
+<form action="<%= submitUrl %>" method="POST" id="questionEditorForm">
+  <input type="hidden" name="questionPayload" id="questionPayload" />
+
+  <section class="card">
+    <label>Question title
+      <input id="questionTitle" type="text" required value="<%= question?.title || '' %>" />
+    </label>
+
+    <label>Description
+      <textarea id="questionDescription" rows="3"><%= question?.description || '' %></textarea>
+    </label>
+
+    <label>Type
+      <select id="questionType">
+        <option value="single_choice" <%= question?.type === 'single_choice' ? 'selected' : '' %>>single choice</option>
+        <option value="multi_choice" <%= question?.type === 'multi_choice' ? 'selected' : '' %>>multi choice</option>
+        <option value="text" <%= question?.type === 'text' ? 'selected' : '' %>>text</option>
+        <option value="number" <%= question?.type === 'number' ? 'selected' : '' %>>number</option>
+      </select>
+    </label>
+
+    <label>
+      <input id="questionRequired" type="checkbox" <%= question?.required ? 'checked' : '' %> />
+      Required question
+    </label>
+  </section>
+
+  <section class="card choice-settings" id="choiceSettings">
+    <div class="page-head">
+      <div>
+        <h2>Options</h2>
+        <p>Choice questions need at least two options.</p>
+      </div>
+      <button class="btn btn-secondary" type="button" id="addOptionBtn">+ Add Option</button>
+    </div>
+    <div id="questionOptions"></div>
+  </section>
+
+  <section class="card text-settings" id="textSettings">
+    <h2>Text Validation</h2>
+    <label>Minimum length
+      <input id="textMinLength" type="number" value="<%= question?.validation?.text?.minLength ?? '' %>" />
+    </label>
+    <label>Maximum length
+      <input id="textMaxLength" type="number" value="<%= question?.validation?.text?.maxLength ?? '' %>" />
+    </label>
+  </section>
+
+  <section class="card number-settings" id="numberSettings">
+    <h2>Number Validation</h2>
+    <label>Minimum value
+      <input id="numberMin" type="number" value="<%= question?.validation?.number?.min ?? '' %>" />
+    </label>
+    <label>Maximum value
+      <input id="numberMax" type="number" value="<%= question?.validation?.number?.max ?? '' %>" />
+    </label>
+    <label>
+      <input id="integerOnly" type="checkbox" <%= question?.validation?.number?.integerOnly ? 'checked' : '' %> />
+      Integer only
+    </label>
+  </section>
+
+  <section class="card multi-settings" id="multiSettings">
+    <h2>Multi-Select Validation</h2>
+    <label>Min selected
+      <input id="multiMin" type="number" value="<%= question?.validation?.multi?.minSelected ?? '' %>" />
+    </label>
+    <label>Max selected
+      <input id="multiMax" type="number" value="<%= question?.validation?.multi?.maxSelected ?? '' %>" />
+    </label>
+    <label>Exact selected
+      <input id="multiExact" type="number" value="<%= question?.validation?.multi?.exactSelected ?? '' %>" />
+    </label>
+  </section>
+
+  <div class="button-row">
+    <button class="btn" type="submit">Save Question</button>
+    <a class="btn btn-secondary" href="/questions">Cancel</a>
+  </div>
+</form>
+
+<script>
+  window.__INITIAL_QUESTION__ = <%- JSON.stringify(question || null) %>;
+</script>
+<script src="/js/questionEditor.js"></script>
+<%- include('../partials/footer') %>

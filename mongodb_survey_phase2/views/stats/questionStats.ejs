@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+<section class="card">
+  <h1>单题统计</h1>
+  <p>问卷：<%= survey.title %></p>
+  <h2><%= questionStats.title %></h2>
+  <p>题型：<%= questionStats.type %> ｜ 回答人数：<%= questionStats.totalResponses %></p>
+
+  <% if (questionStats.optionCounts) { %>
+    <ul class="stats-list">
+      <% questionStats.optionCounts.forEach((option) => { %>
+        <li><span><%= option.label %></span><strong><%= option.count %></strong></li>
+      <% }) %>
+    </ul>
+  <% } else if (questionStats.type === 'number') { %>
+    <p>平均值：<%= questionStats.average === null ? '暂无' : questionStats.average.toFixed(2) %></p>
+    <pre><%= JSON.stringify(questionStats.allValues, null, 2) %></pre>
+  <% } else { %>
+    <pre><%= JSON.stringify(questionStats.allValues, null, 2) %></pre>
+  <% } %>
+
+  <div class="button-row">
+    <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">返回整卷统计</a>
+  </div>
+</section>
+<%- include('../partials/footer') %>

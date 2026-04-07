@@ -1,0 +1,152 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1><%= pageTitle %></h1>
+    <p>Configure survey settings, then compose the survey with custom questions or imported question-bank versions.</p>
+  </div>
+</section>
+
+<% if (surveyLocked) { %>
+  <section class="alert error">
+    This survey is locked because it has already been published or closed. Historical survey questions cannot be edited.
+  </section>
+<% } %>
+
+<form action="<%= submitUrl %>" method="POST" id="builderForm">
+  <input type="hidden" name="builderPayload" id="builderPayload" />
+  <div class="builder-shell">
+    <div class="builder-main">
+      <section class="card">
+        <h2>Survey Basics</h2>
+        <label>Survey title
+          <input id="surveyTitle" type="text" required value="<%= survey?.title || '' %>" <%= surveyLocked ? 'disabled' : '' %> />
+        </label>
+        <label>Description
+          <textarea id="surveyDescription" rows="4" <%= surveyLocked ? 'disabled' : '' %>><%= survey?.description || '' %></textarea>
+        </label>
+
+        <div class="settings-grid">
+          <div class="setting-card">
+            <div class="setting-copy">
+              <label class="setting-title" for="allowAnonymous">Allow anonymous respondents</label>
+              <p class="setting-desc">If enabled, users can submit this survey without signing in.</p>
+            </div>
+            <input
+              id="allowAnonymous"
+              type="checkbox"
+              <%= survey?.settings?.allowAnonymous ? 'checked' : '' %>
+              <%= surveyLocked ? 'disabled' : '' %>
+            />
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-copy">
+              <label class="setting-title" for="allowMultipleSubmissions">Allow multiple submissions</label>
+              <p class="setting-desc">If disabled, each signed-in user or anonymous session can submit only once.</p>
+            </div>
+            <input
+              id="allowMultipleSubmissions"
+              type="checkbox"
+              <%= survey?.settings?.allowMultipleSubmissions !== false ? 'checked' : '' %>
+              <%= surveyLocked ? 'disabled' : '' %>
+            />
+          </div>
+        </div>
+
+        <label>Deadline
+          <input
+            id="deadlineAt"
+            type="datetime-local"
+            value="<%= survey?.settings?.deadlineAt ? new Date(survey.settings.deadlineAt).toISOString().slice(0, 16) : '' %>"
+            <%= surveyLocked ? 'disabled' : '' %>
+          />
+        </label>
+      </section>
+
+      <section class="card">
+        <div class="page-head">
+          <div>
+            <h2>Survey Questions</h2>
+            <p>Imported question-bank questions stay version-locked. You can still configure survey-only jump rules.</p>
+          </div>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div class="builder-question-actions">
+          <button class="btn" type="button" id="addQuestionBtn" <%= surveyLocked ? 'disabled' : '' %>>+ Add Custom Question</button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="builder-sidebar">
+      <section class="card sticky-card">
+        <div class="page-head">
+          <div>
+            <h2>Question Bank</h2>
+            <p>Import the latest version of reusable questions into this survey.</p>
+          </div>
+          <a class="btn btn-secondary" href="/questions">Manage</a>
+        </div>
+
+        <% if (!questionCatalog.questions.length) { %>
+          <p class="muted">No question-bank questions yet.</p>
+        <% } %>
+
+        <% if (questionCatalog.libraries.length) { %>
+          <div class="catalog-group">
+            <h3>Libraries</h3>
+            <% questionCatalog.libraries.forEach((library) => { %>
+              <div class="catalog-library">
+                <strong><%= library.name %></strong>
+                <div class="catalog-list">
+                  <% library.questions.forEach((question) => { %>
+                    <button
+                      class="btn btn-secondary import-question-btn"
+                      type="button"
+                      data-question-id="<%= question._id %>"
+                      <%= surveyLocked ? 'disabled' : '' %>
+                    >
+                      Add v<%= question.version %> - <%= question.title %>
+                    </button>
+                  <% }) %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <div class="catalog-group">
+          <h3>All Accessible Versions</h3>
+          <div class="catalog-list">
+            <% (questionCatalog.questionVersions || questionCatalog.questions).forEach((question) => { %>
+              <button
+                class="btn btn-secondary import-question-btn"
+                type="button"
+                data-question-id="<%= question._id %>"
+                <%= surveyLocked ? 'disabled' : '' %>
+              >
+                Add v<%= question.version %> - <%= question.title %>
+              </button>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="button-row">
+    <% if (!surveyLocked) { %>
+      <button class="btn" type="button" id="saveSurveyBtn">Save Survey</button>
+    <% } %>
+    <a class="btn btn-secondary" href="/dashboard">Back</a>
+  </div>
+</form>
+
+<script>
+  window.__INITIAL_SURVEY__ = <%- JSON.stringify(survey || null) %>;
+  window.__QUESTION_CATALOG__ = <%- JSON.stringify(questionCatalog || { questions: [], libraries: [] }) %>;
+  window.__SURVEY_LOCKED__ = <%- JSON.stringify(!!surveyLocked) %>;
+</script>
+<script src="/js/builder.js"></script>
+<%- include('../partials/footer') %>

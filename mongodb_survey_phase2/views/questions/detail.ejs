@@ -1,0 +1,118 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1><%= question.title %></h1>
+    <p>Root <code><%= question.rootQuestionId %></code> - current version <strong>v<%= question.version %></strong></p>
+  </div>
+  <div class="button-row">
+    <a class="btn btn-secondary" href="/questions">Back</a>
+    <% if (canManage) { %>
+      <a class="btn" href="/questions/<%= question._id %>/new-version">Create New Version</a>
+    <% } %>
+  </div>
+</section>
+
+<div class="builder-shell">
+  <div class="builder-main">
+    <section class="card">
+      <h2>Current Version</h2>
+      <ul class="meta-list">
+        <li><span>Type</span><strong><%= question.type %></strong></li>
+        <li><span>Visibility</span><strong><%= question.visibility %></strong></li>
+        <li><span>Parent version</span><strong><%= question.parentQuestionId || 'none' %></strong></li>
+      </ul>
+      <p><%= question.description || 'No description' %></p>
+
+      <% if (question.options?.length) { %>
+        <h3>Options</h3>
+        <ul class="stats-list">
+          <% question.options.forEach((option) => { %>
+            <li><span><%= option.label %></span><strong><code><%= option.optionId %></code></strong></li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+
+    <section class="card">
+      <h2>Version History</h2>
+      <div class="stats-list">
+        <% history.forEach((item) => { %>
+          <div class="history-row">
+            <span>v<%= item.version %> - <%= new Date(item.createdAt).toLocaleString('zh-CN', { hour12: false }) %></span>
+            <a class="btn btn-secondary" href="/questions/<%= item._id %>">Open</a>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Used By Surveys</h2>
+      <% if (!usage.length) { %>
+        <p class="muted">This question root has not been used in any survey yet.</p>
+      <% } %>
+      <div class="stats-list">
+        <% usage.forEach((survey) => { %>
+          <div class="history-row">
+            <span><%= survey.title %> - <%= survey.status %></span>
+            <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">Survey Stats</a>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Cross-Survey Statistics</h2>
+      <p>Total responses: <strong><%= crossSurveyStats.totalResponses %></strong></p>
+      <% if (crossSurveyStats.optionCounts) { %>
+        <ul class="stats-list">
+          <% crossSurveyStats.optionCounts.forEach((option) => { %>
+            <li><span><%= option.label %></span><strong><%= option.count %></strong></li>
+          <% }) %>
+        </ul>
+      <% } else if (question.type === 'number') { %>
+        <p>Average: <%= crossSurveyStats.average === null ? 'N/A' : crossSurveyStats.average.toFixed(2) %></p>
+        <pre><%= JSON.stringify(crossSurveyStats.values, null, 2) %></pre>
+      <% } else { %>
+        <pre><%= JSON.stringify(crossSurveyStats.values || [], null, 2) %></pre>
+      <% } %>
+    </section>
+  </div>
+
+  <aside class="builder-sidebar">
+    <% if (canManage) { %>
+      <section class="card sticky-card">
+        <h2>Share This Question Root</h2>
+        <form action="/questions/<%= question._id %>/share" method="POST" class="form-grid">
+          <label>Target username
+            <input type="text" name="username" required />
+          </label>
+          <button class="btn" type="submit">Share</button>
+        </form>
+      </section>
+    <% } %>
+
+    <section class="card">
+      <h2>Add To Library</h2>
+      <% if (!libraries.length) { %>
+        <p class="muted">Create a library first from the Question Bank page.</p>
+      <% } %>
+      <% libraries.forEach((library) => { %>
+        <div class="catalog-library">
+          <strong><%= library.name %></strong>
+          <p class="muted"><%= library.description || 'No description' %></p>
+          <% if (library.containsQuestion) { %>
+            <form action="/questions/libraries/<%= library._id %>/questions/<%= question.rootQuestionId %>/remove" method="POST">
+              <button class="btn btn-danger" type="submit">Remove from library</button>
+            </form>
+          <% } else { %>
+            <form action="/questions/libraries/<%= library._id %>/questions" method="POST">
+              <input type="hidden" name="questionId" value="<%= question._id %>" />
+              <button class="btn btn-secondary" type="submit">Add to library</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+    </section>
+  </aside>
+</div>
+<%- include('../partials/footer') %>

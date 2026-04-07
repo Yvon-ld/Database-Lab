@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+<section class="page-head">
+  <div>
+    <h1>My Surveys</h1>
+    <p>Manage your own surveys, publish them, and review survey-level statistics.</p>
+  </div>
+  <div class="button-row">
+    <a class="btn btn-secondary" href="/questions">Question Bank</a>
+    <a class="btn" href="/surveys/new">+ Create Survey</a>
+  </div>
+</section>
+
+<% if (!surveys.length) { %>
+  <section class="card">
+    <p>You have not created any surveys yet.</p>
+  </section>
+<% } %>
+
+<section class="survey-grid">
+  <% surveys.forEach((survey) => { %>
+    <article class="card survey-card">
+      <div class="survey-card-head">
+        <h2><%= survey.title %></h2>
+        <span class="status <%= survey.status %>"><%= survey.status %></span>
+      </div>
+      <p><%= survey.description || 'No description' %></p>
+      <ul class="meta-list">
+        <li><span>Link</span><strong><a href="/survey/<%= survey.slug %>" target="_blank"><code>/survey/<%= survey.slug %></code></a></strong></li>
+        <li><span>Anonymous</span><strong><%= survey.settings.allowAnonymous ? 'Yes' : 'No' %></strong></li>
+        <li><span>Responses</span><strong><%= survey.responseCount %></strong></li>
+        <li><span>Version</span><strong>v<%= survey.version %></strong></li>
+      </ul>
+      <div class="button-row wrap">
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/edit">Edit</a>
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">Stats</a>
+        <% if (survey.status !== 'published') { %>
+          <form action="/surveys/<%= survey._id %>/publish" method="POST" class="inline-form">
+            <button class="btn" type="submit">Publish</button>
+          </form>
+        <% } %>
+        <% if (survey.status !== 'closed') { %>
+          <form action="/surveys/<%= survey._id %>/close" method="POST" class="inline-form">
+            <button class="btn btn-danger" type="submit">Close</button>
+          </form>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<section class="card">
+  <h1><%= survey.title %></h1>
+  <p><%= survey.description || '暂无问卷说明' %></p>
+  <div class="meta-banner">
+    <span>匿名填写：<%= survey.settings.allowAnonymous ? '允许' : '不允许' %></span>
+    <span>截止时间：<%= survey.settings.deadlineAt ? new Date(survey.settings.deadlineAt).toLocaleString('zh-CN') : '无限制' %></span>
+  </div>
+</section>
+
+<form action="<%= submitUrl %>" method="POST" id="fillSurveyForm">
+  <input type="hidden" name="answersPayload" id="answersPayload" />
+  <section class="card">
+    <div id="surveyQuestionHost"></div>
+    <div id="clientError" class="alert error hidden"></div>
+    <div class="button-row">
+      <button class="btn btn-secondary" type="button" id="prevBtn">上一题</button>
+      <button class="btn" type="button" id="nextBtn">下一题</button>
+      <button class="btn btn-success hidden" type="submit" id="submitBtn">提交问卷</button>
+    </div>
+  </section>
+</form>
+
+<script>
+  window.__SURVEY__ = <%- JSON.stringify(survey) %>;
+</script>
+<script src="/js/fillSurvey.js"></script>
+<%- include('../partials/footer') %>
