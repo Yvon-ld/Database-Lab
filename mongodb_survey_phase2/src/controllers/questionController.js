@@ -35,7 +35,7 @@ async function listQuestions(req, res) {
 
 async function showNewQuestionPage(req, res) {
   res.render('questions/editor', {
-    pageTitle: 'Create Question',
+    pageTitle: '新建题目',
     submitUrl: '/questions',
     question: null,
     sourceQuestion: null
@@ -50,10 +50,10 @@ async function createQuestion(req, res) {
       ...normalized
     });
 
-    req.session.success = 'Question saved to the question bank';
+    req.session.success = '题目已保存到题库';
     return res.redirect(`/questions/${question._id}`);
   } catch (error) {
-    req.session.error = `Create question failed: ${error.message}`;
+    req.session.error = `创建题目失败：${error.message}`;
     return res.redirect('/questions/new');
   }
 }
@@ -63,8 +63,8 @@ async function showQuestionDetailPage(req, res) {
 
   if (!question) {
     return res.status(404).render('partials/message', {
-      title: 'Question not found',
-      message: 'The requested question version does not exist or is not accessible.'
+      title: '未找到题目',
+      message: '请求的题目版本不存在，或你无权访问。'
     });
   }
 
@@ -95,13 +95,13 @@ async function showNewVersionPage(req, res) {
 
   if (!sourceQuestion) {
     return res.status(404).render('partials/message', {
-      title: 'Question not found',
-      message: 'Only the owner can create a new version.'
+      title: '未找到题目',
+      message: '只有题目拥有者才能创建新版本。'
     });
   }
 
   res.render('questions/editor', {
-    pageTitle: `Create New Version for v${sourceQuestion.version}`,
+    pageTitle: `基于 v${sourceQuestion.version} 创建新版本`,
     submitUrl: `/questions/${sourceQuestion._id}/versions`,
     question: sourceQuestion.toObject(),
     sourceQuestion: sourceQuestion.toObject()
@@ -113,7 +113,7 @@ async function createQuestionVersion(req, res) {
     const sourceQuestion = await loadOwnedQuestion(req.params.id, req.currentUser._id);
 
     if (!sourceQuestion) {
-      req.session.error = 'Question not found';
+      req.session.error = '未找到题目';
       return res.redirect('/questions');
     }
 
@@ -132,10 +132,10 @@ async function createQuestionVersion(req, res) {
       ...normalized
     });
 
-    req.session.success = 'New question version created';
+    req.session.success = '新题目版本已创建';
     return res.redirect(`/questions/${newQuestion._id}`);
   } catch (error) {
-    req.session.error = `Create version failed: ${error.message}`;
+    req.session.error = `创建版本失败：${error.message}`;
     return res.redirect(`/questions/${req.params.id}`);
   }
 }
@@ -144,19 +144,19 @@ async function shareQuestion(req, res) {
   const question = await loadOwnedQuestion(req.params.id, req.currentUser._id);
 
   if (!question) {
-    req.session.error = 'Question not found';
+    req.session.error = '未找到题目';
     return res.redirect('/questions');
   }
 
   const username = String(req.body.username || '').trim();
   if (!username) {
-    req.session.error = 'Username is required';
+    req.session.error = '用户名不能为空';
     return res.redirect(`/questions/${question._id}`);
   }
 
   const user = await User.findOne({ username });
   if (!user) {
-    req.session.error = 'Target user not found';
+    req.session.error = '未找到目标用户';
     return res.redirect(`/questions/${question._id}`);
   }
 
@@ -169,7 +169,7 @@ async function shareQuestion(req, res) {
     return item.save();
   }));
 
-  req.session.success = `Question shared with ${user.username}`;
+  req.session.success = `题目已共享给 ${user.username}`;
   return res.redirect(`/questions/${question._id}`);
 }
 
@@ -177,7 +177,7 @@ async function createLibrary(req, res) {
   const name = String(req.body.name || '').trim();
 
   if (!name) {
-    req.session.error = 'Library name is required';
+    req.session.error = '分组名称不能为空';
     return res.redirect('/questions');
   }
 
@@ -187,7 +187,7 @@ async function createLibrary(req, res) {
     description: String(req.body.description || '').trim()
   });
 
-  req.session.success = 'Question library created';
+  req.session.success = '题目分组已创建';
   return res.redirect('/questions');
 }
 
@@ -198,13 +198,13 @@ async function addQuestionToLibrary(req, res) {
   });
 
   if (!library) {
-    req.session.error = 'Library not found';
+    req.session.error = '未找到分组';
     return res.redirect('/questions');
   }
 
   const question = await loadAccessibleQuestion(req.body.questionId, req.currentUser._id);
   if (!question) {
-    req.session.error = 'Question not found';
+    req.session.error = '未找到题目';
     return res.redirect('/questions');
   }
 
@@ -217,7 +217,7 @@ async function addQuestionToLibrary(req, res) {
     await library.save();
   }
 
-  req.session.success = 'Question added to library';
+  req.session.success = '题目已加入分组';
   return res.redirect(`/questions/${question._id}`);
 }
 
@@ -228,7 +228,7 @@ async function removeQuestionFromLibrary(req, res) {
   });
 
   if (!library) {
-    req.session.error = 'Library not found';
+    req.session.error = '未找到分组';
     return res.redirect('/questions');
   }
 
@@ -237,7 +237,7 @@ async function removeQuestionFromLibrary(req, res) {
   );
   await library.save();
 
-  req.session.success = 'Question removed from library';
+  req.session.success = '题目已从分组中移除';
   return res.redirect('/questions');
 }
 

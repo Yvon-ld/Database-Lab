@@ -31,7 +31,7 @@ function normalizeQuestions(rawQuestions = []) {
 
 function parseBuilderPayload(input) {
   if (!input) {
-    throw new Error('Survey payload is required');
+    throw new Error('问卷载荷不能为空');
   }
   if (typeof input === 'string') {
     return JSON.parse(input);
@@ -44,11 +44,11 @@ function normalizeSurveyPayload(input) {
   const questions = normalizeQuestions(payload.questions || []);
 
   if (!payload.title || !String(payload.title).trim()) {
-    throw new Error('Survey title is required');
+    throw new Error('问卷标题不能为空');
   }
 
   if (questions.length === 0) {
-    throw new Error('At least one question is required');
+    throw new Error('至少需要保留一道题目');
   }
 
   return {

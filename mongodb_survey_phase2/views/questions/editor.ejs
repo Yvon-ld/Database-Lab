@@ -2,15 +2,15 @@
 <section class="page-head">
   <div>
     <h1><%= pageTitle %></h1>
-    <p>Create a reusable question definition. Survey-specific jump rules are configured later inside a survey.</p>
+    <p>先创建可复用的题目定义，问卷专属的跳转规则会在问卷内部再进行配置。</p>
   </div>
-  <a class="btn btn-secondary" href="/questions">Back to Question Bank</a>
+  <a class="btn btn-secondary" href="/questions">返回题库</a>
 </section>
 
 <% if (sourceQuestion) { %>
   <section class="card">
     <p>
-      You are creating a new version from root <code><%= sourceQuestion.rootQuestionId %></code>, current base version <strong>v<%= sourceQuestion.version %></strong>.
+      你正在基于根题目 <code><%= sourceQuestion.rootQuestionId %></code> 创建新版本，当前基础版本为 <strong>v<%= sourceQuestion.version %></strong>。
     </p>
   </section>
 <% } %>
@@ -19,80 +19,80 @@
   <input type="hidden" name="questionPayload" id="questionPayload" />
 
   <section class="card">
-    <label>Question title
+    <label>题目标题
       <input id="questionTitle" type="text" required value="<%= question?.title || '' %>" />
     </label>
 
-    <label>Description
+    <label>题目说明
       <textarea id="questionDescription" rows="3"><%= question?.description || '' %></textarea>
     </label>
 
-    <label>Type
+    <label>题目类型
       <select id="questionType">
-        <option value="single_choice" <%= question?.type === 'single_choice' ? 'selected' : '' %>>single choice</option>
-        <option value="multi_choice" <%= question?.type === 'multi_choice' ? 'selected' : '' %>>multi choice</option>
-        <option value="text" <%= question?.type === 'text' ? 'selected' : '' %>>text</option>
-        <option value="number" <%= question?.type === 'number' ? 'selected' : '' %>>number</option>
+        <option value="single_choice" <%= question?.type === 'single_choice' ? 'selected' : '' %>>单选题</option>
+        <option value="multi_choice" <%= question?.type === 'multi_choice' ? 'selected' : '' %>>多选题</option>
+        <option value="text" <%= question?.type === 'text' ? 'selected' : '' %>>文本题</option>
+        <option value="number" <%= question?.type === 'number' ? 'selected' : '' %>>数字题</option>
       </select>
     </label>
 
     <label>
       <input id="questionRequired" type="checkbox" <%= question?.required ? 'checked' : '' %> />
-      Required question
+      设为必答题
     </label>
   </section>
 
   <section class="card choice-settings" id="choiceSettings">
     <div class="page-head">
       <div>
-        <h2>Options</h2>
-        <p>Choice questions need at least two options.</p>
+        <h2>选项设置</h2>
+        <p>选择题至少需要两个选项。</p>
       </div>
-      <button class="btn btn-secondary" type="button" id="addOptionBtn">+ Add Option</button>
+      <button class="btn btn-secondary" type="button" id="addOptionBtn">+ 添加选项</button>
     </div>
     <div id="questionOptions"></div>
   </section>
 
   <section class="card text-settings" id="textSettings">
-    <h2>Text Validation</h2>
-    <label>Minimum length
+    <h2>文本校验</h2>
+    <label>最小长度
       <input id="textMinLength" type="number" value="<%= question?.validation?.text?.minLength ?? '' %>" />
     </label>
-    <label>Maximum length
+    <label>最大长度
       <input id="textMaxLength" type="number" value="<%= question?.validation?.text?.maxLength ?? '' %>" />
     </label>
   </section>
 
   <section class="card number-settings" id="numberSettings">
-    <h2>Number Validation</h2>
-    <label>Minimum value
+    <h2>数字校验</h2>
+    <label>最小值
       <input id="numberMin" type="number" value="<%= question?.validation?.number?.min ?? '' %>" />
     </label>
-    <label>Maximum value
+    <label>最大值
       <input id="numberMax" type="number" value="<%= question?.validation?.number?.max ?? '' %>" />
     </label>
     <label>
       <input id="integerOnly" type="checkbox" <%= question?.validation?.number?.integerOnly ? 'checked' : '' %> />
-      Integer only
+      仅允许整数
     </label>
   </section>
 
   <section class="card multi-settings" id="multiSettings">
-    <h2>Multi-Select Validation</h2>
-    <label>Min selected
+    <h2>多选校验</h2>
+    <label>最少选择数
       <input id="multiMin" type="number" value="<%= question?.validation?.multi?.minSelected ?? '' %>" />
     </label>
-    <label>Max selected
+    <label>最多选择数
       <input id="multiMax" type="number" value="<%= question?.validation?.multi?.maxSelected ?? '' %>" />
     </label>
-    <label>Exact selected
+    <label>必须精确选择数
       <input id="multiExact" type="number" value="<%= question?.validation?.multi?.exactSelected ?? '' %>" />
     </label>
   </section>
 
   <div class="button-row">
-    <button class="btn" type="submit">Save Question</button>
-    <a class="btn btn-secondary" href="/questions">Cancel</a>
+    <button class="btn" type="submit">保存题目</button>
+    <a class="btn btn-secondary" href="/questions">取消</a>
   </div>
 </form>
 

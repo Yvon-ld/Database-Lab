@@ -3,7 +3,7 @@
   <h1>单题统计</h1>
   <p>问卷：<%= survey.title %></p>
   <h2><%= questionStats.title %></h2>
-  <p>题型：<%= questionStats.type %> ｜ 回答人数：<%= questionStats.totalResponses %></p>
+  <p>题型：<%= translateQuestionType(questionStats.type) %> ｜ 回答人数：<%= questionStats.totalResponses %></p>
 
   <% if (questionStats.optionCounts) { %>
     <ul class="stats-list">

@@ -14,10 +14,10 @@ function createOptionRow(option = {}) {
   row.className = 'option-block';
   row.dataset.optionId = option.optionId || randomId('option');
   row.innerHTML = `
-    <label>Option label
+    <label>选项内容
       <input class="option-label" type="text" value="${option.label || ''}" />
     </label>
-    <button class="btn btn-danger remove-option-btn" type="button">Remove</button>
+    <button class="btn btn-danger remove-option-btn" type="button">删除</button>
   `;
 
   row.querySelector('.remove-option-btn').addEventListener('click', () => row.remove());

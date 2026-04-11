@@ -53,24 +53,24 @@ function normalizeQuestionDefinition(rawQuestion = {}) {
 
 function validateQuestionDefinition(question) {
   if (!question.title) {
-    throw new Error('Question title is required');
+    throw new Error('题目标题不能为空');
   }
 
   if (!['single_choice', 'multi_choice', 'text', 'number'].includes(question.type)) {
-    throw new Error('Unsupported question type');
+    throw new Error('不支持的题目类型');
   }
 
   if (
     (question.type === 'single_choice' || question.type === 'multi_choice') &&
     question.options.length < 2
   ) {
-    throw new Error(`Question "${question.title}" must contain at least two options`);
+    throw new Error(`题目“${question.title}”至少需要两个选项`);
   }
 }
 
 function parseQuestionPayload(input) {
   if (!input) {
-    throw new Error('Question payload is required');
+    throw new Error('题目载荷不能为空');
   }
 
   if (typeof input === 'string') {

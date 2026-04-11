@@ -2,13 +2,13 @@
 <section class="page-head">
   <div>
     <h1><%= pageTitle %></h1>
-    <p>Configure survey settings, then compose the survey with custom questions or imported question-bank versions.</p>
+    <p>先配置问卷设置，再组合自定义题目或从题库导入的题目版本。</p>
   </div>
 </section>
 
 <% if (surveyLocked) { %>
   <section class="alert error">
-    This survey is locked because it has already been published or closed. Historical survey questions cannot be edited.
+    这份问卷已经发布或关闭，因此已被锁定。为了保留历史版本，问卷中的题目不能再编辑。
   </section>
 <% } %>
 
@@ -17,19 +17,19 @@
   <div class="builder-shell">
     <div class="builder-main">
       <section class="card">
-        <h2>Survey Basics</h2>
-        <label>Survey title
+        <h2>问卷基础信息</h2>
+        <label>问卷标题
           <input id="surveyTitle" type="text" required value="<%= survey?.title || '' %>" <%= surveyLocked ? 'disabled' : '' %> />
         </label>
-        <label>Description
+        <label>问卷说明
           <textarea id="surveyDescription" rows="4" <%= surveyLocked ? 'disabled' : '' %>><%= survey?.description || '' %></textarea>
         </label>
 
         <div class="settings-grid">
           <div class="setting-card">
             <div class="setting-copy">
-              <label class="setting-title" for="allowAnonymous">Allow anonymous respondents</label>
-              <p class="setting-desc">If enabled, users can submit this survey without signing in.</p>
+              <label class="setting-title" for="allowAnonymous">允许匿名填写</label>
+              <p class="setting-desc">开启后，用户无需登录也可以提交这份问卷。</p>
             </div>
             <input
               id="allowAnonymous"
@@ -41,8 +41,8 @@
 
           <div class="setting-card">
             <div class="setting-copy">
-              <label class="setting-title" for="allowMultipleSubmissions">Allow multiple submissions</label>
-              <p class="setting-desc">If disabled, each signed-in user or anonymous session can submit only once.</p>
+              <label class="setting-title" for="allowMultipleSubmissions">允许重复提交</label>
+              <p class="setting-desc">关闭后，每个已登录用户或每个匿名会话都只能提交一次。</p>
             </div>
             <input
               id="allowMultipleSubmissions"
@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <label>Deadline
+        <label>截止时间
           <input
             id="deadlineAt"
             type="datetime-local"
@@ -66,15 +66,15 @@
       <section class="card">
         <div class="page-head">
           <div>
-            <h2>Survey Questions</h2>
-            <p>Imported question-bank questions stay version-locked. You can still configure survey-only jump rules.</p>
+            <h2>问卷题目</h2>
+            <p>从题库导入的题目会锁定在当前版本，但你仍然可以为当前问卷配置跳转规则。</p>
           </div>
         </div>
 
         <div id="questionsContainer"></div>
 
         <div class="builder-question-actions">
-          <button class="btn" type="button" id="addQuestionBtn" <%= surveyLocked ? 'disabled' : '' %>>+ Add Custom Question</button>
+          <button class="btn" type="button" id="addQuestionBtn" <%= surveyLocked ? 'disabled' : '' %>>+ 添加自定义题目</button>
         </div>
       </section>
     </div>
@@ -83,19 +83,19 @@
       <section class="card sticky-card">
         <div class="page-head">
           <div>
-            <h2>Question Bank</h2>
-            <p>Import the latest version of reusable questions into this survey.</p>
+            <h2>题库</h2>
+            <p>把可复用题目的最新版本导入到当前问卷中。</p>
           </div>
-          <a class="btn btn-secondary" href="/questions">Manage</a>
+          <a class="btn btn-secondary" href="/questions">管理题库</a>
         </div>
 
         <% if (!questionCatalog.questions.length) { %>
-          <p class="muted">No question-bank questions yet.</p>
+          <p class="muted">题库中还没有题目。</p>
         <% } %>
 
         <% if (questionCatalog.libraries.length) { %>
           <div class="catalog-group">
-            <h3>Libraries</h3>
+            <h3>题库分组</h3>
             <% questionCatalog.libraries.forEach((library) => { %>
               <div class="catalog-library">
                 <strong><%= library.name %></strong>
@@ -107,7 +107,7 @@
                       data-question-id="<%= question._id %>"
                       <%= surveyLocked ? 'disabled' : '' %>
                     >
-                      Add v<%= question.version %> - <%= question.title %>
+                      添加 v<%= question.version %> - <%= question.title %>
                     </button>
                   <% }) %>
                 </div>
@@ -117,7 +117,7 @@
         <% } %>
 
         <div class="catalog-group">
-          <h3>All Accessible Versions</h3>
+          <h3>所有可访问版本</h3>
           <div class="catalog-list">
             <% (questionCatalog.questionVersions || questionCatalog.questions).forEach((question) => { %>
               <button
@@ -126,7 +126,7 @@
                 data-question-id="<%= question._id %>"
                 <%= surveyLocked ? 'disabled' : '' %>
               >
-                Add v<%= question.version %> - <%= question.title %>
+                添加 v<%= question.version %> - <%= question.title %>
               </button>
             <% }) %>
           </div>
@@ -137,9 +137,9 @@
 
   <div class="button-row">
     <% if (!surveyLocked) { %>
-      <button class="btn" type="button" id="saveSurveyBtn">Save Survey</button>
+      <button class="btn" type="button" id="saveSurveyBtn">保存问卷</button>
     <% } %>
-    <a class="btn btn-secondary" href="/dashboard">Back</a>
+    <a class="btn btn-secondary" href="/dashboard">返回</a>
   </div>
 </form>
 

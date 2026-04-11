@@ -47,6 +47,22 @@ app.use(async (req, res, next) => {
   delete req.session.error;
   delete req.session.success;
 
+  res.locals.translateSurveyStatus = (status) => ({
+    draft: '草稿',
+    published: '已发布',
+    closed: '已关闭'
+  }[status] || status || '');
+  res.locals.translateQuestionType = (type) => ({
+    single_choice: '单选题',
+    multi_choice: '多选题',
+    text: '文本题',
+    number: '数字题'
+  }[type] || type || '');
+  res.locals.translateVisibility = (visibility) => ({
+    private: '私有',
+    shared: '共享'
+  }[visibility] || visibility || '');
+
   if (req.session.userId) {
     try {
       const user = await User.findById(req.session.userId).lean();
@@ -68,7 +84,7 @@ app.use('/questions', questionRoutes);
 
 app.use((req, res) => {
   res.status(404).render('partials/message', {
-    title: '404 Not Found',
+    title: '404 未找到页面',
     message: '页面不存在'
   });
 });

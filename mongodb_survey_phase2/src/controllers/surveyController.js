@@ -30,7 +30,7 @@ async function showCreateSurveyPage(req, res) {
   const questionCatalog = await buildQuestionCatalog(req.currentUser._id);
 
   res.render('surveys/builder', {
-    pageTitle: 'Create Survey',
+    pageTitle: '新建问卷',
     submitUrl: '/surveys',
     survey: null,
     surveyLocked: false,
@@ -47,10 +47,10 @@ async function createSurvey(req, res) {
       slug: generateSurveySlug()
     });
 
-    req.session.success = 'Survey created successfully';
+    req.session.success = '问卷创建成功';
     return res.redirect(`/surveys/${survey._id}/edit`);
   } catch (error) {
-    req.session.error = `Create survey failed: ${error.message}`;
+    req.session.error = `创建问卷失败：${error.message}`;
     return res.redirect('/surveys/new');
   }
 }
@@ -63,8 +63,8 @@ async function showEditSurveyPage(req, res) {
 
   if (!survey) {
     return res.status(404).render('partials/message', {
-      title: 'Survey not found',
-      message: 'The requested survey does not exist or you do not have access.'
+      title: '未找到问卷',
+      message: '请求的问卷不存在，或你无权访问。'
     });
   }
 
@@ -72,7 +72,7 @@ async function showEditSurveyPage(req, res) {
   const surveyLocked = survey.status === 'published' || survey.status === 'closed';
 
   res.render('surveys/builder', {
-    pageTitle: 'Edit Survey',
+    pageTitle: '编辑问卷',
     submitUrl: `/surveys/${survey._id}`,
     survey,
     surveyLocked,
@@ -88,12 +88,12 @@ async function updateSurvey(req, res) {
     });
 
     if (!survey) {
-      req.session.error = 'Survey not found';
+      req.session.error = '未找到问卷';
       return res.redirect('/dashboard');
     }
 
     if (survey.status === 'published' || survey.status === 'closed') {
-      req.session.error = 'Published or closed surveys are locked to protect historical questions';
+      req.session.error = '问卷已发布或已关闭，为保护历史版本，当前内容已锁定';
       return res.redirect(`/surveys/${survey._id}/edit`);
     }
 
@@ -108,10 +108,10 @@ async function updateSurvey(req, res) {
 
     await survey.save();
 
-    req.session.success = 'Survey updated successfully';
+    req.session.success = '问卷更新成功';
     return res.redirect(`/surveys/${survey._id}/edit`);
   } catch (error) {
-    req.session.error = `Update survey failed: ${error.message}`;
+    req.session.error = `更新问卷失败：${error.message}`;
     return res.redirect(`/surveys/${req.params.id}/edit`);
   }
 }
@@ -123,7 +123,7 @@ async function publishSurvey(req, res) {
   });
 
   if (!survey) {
-    req.session.error = 'Survey not found';
+    req.session.error = '未找到问卷';
     return res.redirect('/dashboard');
   }
 
@@ -131,7 +131,7 @@ async function publishSurvey(req, res) {
   survey.publishedAt = new Date();
   await survey.save();
 
-  req.session.success = 'Survey published';
+  req.session.success = '问卷已发布';
   return res.redirect('/dashboard');
 }
 
@@ -142,7 +142,7 @@ async function closeSurvey(req, res) {
   });
 
   if (!survey) {
-    req.session.error = 'Survey not found';
+    req.session.error = '未找到问卷';
     return res.redirect('/dashboard');
   }
 
@@ -150,7 +150,7 @@ async function closeSurvey(req, res) {
   survey.closedAt = new Date();
   await survey.save();
 
-  req.session.success = 'Survey closed';
+  req.session.success = '问卷已关闭';
   return res.redirect('/dashboard');
 }
 
@@ -170,20 +170,20 @@ async function showFillSurveyPage(req, res) {
 
   if (!survey) {
     return res.status(404).render('partials/message', {
-      title: 'Survey not found',
-      message: 'The survey link is invalid.'
+      title: '未找到问卷',
+      message: '问卷链接无效。'
     });
   }
 
   if (!isSurveyAvailable(survey)) {
     return res.status(400).render('partials/message', {
-      title: 'Survey unavailable',
-      message: 'This survey is not open for submissions.'
+      title: '问卷不可用',
+      message: '这份问卷当前未开放提交。'
     });
   }
 
   if (!survey.settings.allowAnonymous && !req.currentUser) {
-    req.session.error = 'Please sign in before filling this survey';
+    req.session.error = '请先登录后再填写这份问卷';
     return res.redirect('/auth/login');
   }
 
@@ -199,21 +199,21 @@ async function submitSurvey(req, res) {
 
     if (!survey) {
       return res.status(404).render('partials/message', {
-        title: 'Survey not found',
-        message: 'The survey does not exist.'
+        title: '未找到问卷',
+        message: '这份问卷不存在。'
       });
     }
 
     if (!isSurveyAvailable(survey)) {
       return res.status(400).render('partials/message', {
-        title: 'Submission blocked',
-        message: 'This survey is not accepting submissions.'
+        title: '提交被阻止',
+        message: '这份问卷当前不接受提交。'
       });
     }
 
     const currentUser = req.currentUser || null;
     if (!survey.settings.allowAnonymous && !currentUser) {
-      req.session.error = 'Please sign in before filling this survey';
+      req.session.error = '请先登录后再填写这份问卷';
       return res.redirect('/auth/login');
     }
 
@@ -226,16 +226,16 @@ async function submitSurvey(req, res) {
 
         if (existing) {
           return res.status(400).render('partials/message', {
-            title: 'Duplicate submission blocked',
-            message: 'You have already submitted this survey.'
+            title: '重复提交被阻止',
+            message: '你已经提交过这份问卷。'
           });
         }
       } else {
         const anonymousSubmissionSet = getAnonymousSubmissionSet(req.session);
         if (anonymousSubmissionSet.has(String(survey._id))) {
           return res.status(400).render('partials/message', {
-            title: 'Duplicate submission blocked',
-            message: 'Anonymous duplicate submissions are disabled for this survey.'
+            title: '重复提交被阻止',
+            message: '这份问卷已关闭匿名重复提交。'
           });
         }
       }
@@ -270,7 +270,7 @@ async function submitSurvey(req, res) {
 
     if (answerErrors.length > 0) {
       return res.status(400).render('partials/message', {
-        title: 'Submission failed',
+        title: '提交失败',
         message: answerErrors.join('; ')
       });
     }
@@ -292,12 +292,12 @@ async function submitSurvey(req, res) {
     }
 
     return res.render('partials/message', {
-      title: 'Submission successful',
-      message: 'Your answers have been saved.'
+      title: '提交成功',
+      message: '你的答案已保存。'
     });
   } catch (error) {
     return res.status(500).render('partials/message', {
-      title: 'Submission failed',
+      title: '提交失败',
       message: error.message
     });
   }
@@ -311,8 +311,8 @@ async function viewWholeSurveyStats(req, res) {
 
   if (!survey) {
     return res.status(404).render('partials/message', {
-      title: 'Survey not found',
-      message: 'Unable to load survey stats.'
+      title: '未找到问卷',
+      message: '无法加载问卷统计。'
     });
   }
 
@@ -332,8 +332,8 @@ async function viewSingleQuestionStats(req, res) {
 
   if (!survey) {
     return res.status(404).render('partials/message', {
-      title: 'Survey not found',
-      message: 'Unable to load question stats.'
+      title: '未找到问卷',
+      message: '无法加载单题统计。'
     });
   }
 
@@ -342,8 +342,8 @@ async function viewSingleQuestionStats(req, res) {
 
   if (!questionStats) {
     return res.status(404).render('partials/message', {
-      title: 'Question not found',
-      message: 'Unable to load the requested question stats.'
+      title: '未找到题目',
+      message: '无法加载请求的题目统计。'
     });
   }
 

@@ -1,18 +1,18 @@
 <%- include('../partials/header') %>
 <section class="page-head">
   <div>
-    <h1>My Surveys</h1>
-    <p>Manage your own surveys, publish them, and review survey-level statistics.</p>
+    <h1>我的问卷</h1>
+    <p>在这里管理你的问卷，发布问卷，并查看整份问卷的统计结果。</p>
   </div>
   <div class="button-row">
-    <a class="btn btn-secondary" href="/questions">Question Bank</a>
-    <a class="btn" href="/surveys/new">+ Create Survey</a>
+    <a class="btn btn-secondary" href="/questions">题库</a>
+    <a class="btn" href="/surveys/new">+ 新建问卷</a>
   </div>
 </section>
 
 <% if (!surveys.length) { %>
   <section class="card">
-    <p>You have not created any surveys yet.</p>
+    <p>你还没有创建任何问卷。</p>
   </section>
 <% } %>
 
@@ -21,26 +21,26 @@
     <article class="card survey-card">
       <div class="survey-card-head">
         <h2><%= survey.title %></h2>
-        <span class="status <%= survey.status %>"><%= survey.status %></span>
+        <span class="status <%= survey.status %>"><%= translateSurveyStatus(survey.status) %></span>
       </div>
-      <p><%= survey.description || 'No description' %></p>
+      <p><%= survey.description || '暂无说明' %></p>
       <ul class="meta-list">
-        <li><span>Link</span><strong><a href="/survey/<%= survey.slug %>" target="_blank"><code>/survey/<%= survey.slug %></code></a></strong></li>
-        <li><span>Anonymous</span><strong><%= survey.settings.allowAnonymous ? 'Yes' : 'No' %></strong></li>
-        <li><span>Responses</span><strong><%= survey.responseCount %></strong></li>
-        <li><span>Version</span><strong>v<%= survey.version %></strong></li>
+        <li><span>访问链接</span><strong><a href="/survey/<%= survey.slug %>" target="_blank"><code>/survey/<%= survey.slug %></code></a></strong></li>
+        <li><span>匿名填写</span><strong><%= survey.settings.allowAnonymous ? '允许' : '不允许' %></strong></li>
+        <li><span>提交数</span><strong><%= survey.responseCount %></strong></li>
+        <li><span>版本</span><strong>v<%= survey.version %></strong></li>
       </ul>
       <div class="button-row wrap">
-        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/edit">Edit</a>
-        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">Stats</a>
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/edit">编辑</a>
+        <a class="btn btn-secondary" href="/surveys/<%= survey._id %>/stats">统计</a>
         <% if (survey.status !== 'published') { %>
           <form action="/surveys/<%= survey._id %>/publish" method="POST" class="inline-form">
-            <button class="btn" type="submit">Publish</button>
+            <button class="btn" type="submit">发布</button>
           </form>
         <% } %>
         <% if (survey.status !== 'closed') { %>
           <form action="/surveys/<%= survey._id %>/close" method="POST" class="inline-form">
-            <button class="btn btn-danger" type="submit">Close</button>
+            <button class="btn btn-danger" type="submit">关闭</button>
           </form>
         <% } %>
       </div>
